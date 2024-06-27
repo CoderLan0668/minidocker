@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-
+	"minidocker/container"
+	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
@@ -26,9 +27,22 @@ var runCommand = cli.Command{
 		if len(context.Args()) < 1 {
 			return fmt.Errorf("missing container command")
 		}
-		cmd := context.Args().Get(0)
+		var cmdArray []string
+		for _, arg := range context.Args() {
+			cmdArray = append(cmdArray, arg)
+		}
 		tty := context.Bool("it")
-		Run(tty, cmd)
+		Run(tty, cmdArray)
 		return nil
+	},
+}
+
+var initCommand = cli.Command{
+	Name:  "init",
+	Usage: "Init container process run user's process in container. Do not call it outside",
+	Action: func(context *cli.Context) error {
+		log.Infof("init come on")
+		err := container.RunContainerInitProcess()
+		return err
 	},
 }
